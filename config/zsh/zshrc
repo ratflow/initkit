@@ -1,0 +1,67 @@
+# shell-inits zshrc - interactive configuration (no plugin manager)
+
+# --- input --------------------------------------------------------------------
+bindkey -e
+WORDCHARS=${WORDCHARS//[\/]}
+
+# --- history --------------------------------------------------------------------
+setopt CLOBBER
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+unsetopt SHARE_HISTORY
+
+export HISTTIMEFORMAT="[%F %T] "
+export HISTFILE=$HOME/.zsh_history
+export HISTSIZE=1000000
+export SAVEHIST=1000000
+
+# --- completion -------------------------------------------------------------------
+autoload -Uz compinit
+compinit
+
+# --- fzf (key bindings + completion + pastel look) ---------------------------------
+if (( $+commands[fzf] )); then
+  # fzf >= 0.48 ships its own integration
+  if ! source <(fzf --zsh 2>/dev/null); then
+    [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && \
+      source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [[ -r /usr/share/doc/fzf/examples/completion.zsh ]] && \
+      source /usr/share/doc/fzf/examples/completion.zsh
+  fi
+  export FZF_DEFAULT_OPTS="\
+--height=40% --layout=reverse --border=rounded --info=inline \
+--color=fg:#cad3f5,bg:#24273a,hl:#c6a0f6 \
+--color=fg+:#cad3f5,bg+:#363a4f,hl+:#c6a0f6 \
+--color=info:#91d7e3,prompt:#8aadf4,pointer:#f5bde6 \
+--color=marker:#a6da95,spinner:#f5a97f,header:#8bd5ca"
+fi
+
+# --- vendored plugins (plain git clones, see core/zsh.sh) ---------------------------
+if [[ -f $HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
+  source $HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# --- prompt --------------------------------------------------------------------------
+[[ -f $HOME/.zsh/prompt.zsh ]] && source $HOME/.zsh/prompt.zsh
+
+# zsh-syntax-highlighting must be sourced last
+if [[ -f $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+  typeset -A ZSH_HIGHLIGHT_STYLES
+  ZSH_HIGHLIGHT_STYLES[command]='fg=#666666'
+  source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# --- aliases ----------------------------------------------------------------------------
+alias ..='cd ..'
+alias ...='cd ../..'
+if (( $+commands[eza] )); then
+  alias ll='eza -lah --group-directories-first --color=always | less'
+  alias l='eza -lah --group-directories-first --color=always | less'
+else
+  alias ll='ls -lah --group-directories-first --color=auto'
+  alias l='ls -lah --group-directories-first --color=auto'
+fi
+alias gl="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"

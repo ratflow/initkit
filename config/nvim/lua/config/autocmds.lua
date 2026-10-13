@@ -1,0 +1,1 @@
+-- shell-inits: autocmds on top of LazyVim defaults

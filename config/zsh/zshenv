@@ -1,0 +1,19 @@
+# shell-inits zshenv - minimal, sourced by every zsh instance (keep it fast)
+
+# UTF-8 fallback: fresh VMs/containers have no locale set, and a non-UTF-8
+# locale makes tmux render box-drawing/unicode prompts as underscores.
+# C.UTF-8 is always available (glibc >= 2.35, musl) and needs no locale-gen.
+if [[ -z ${LANG:-} ]]; then
+  export LANG=C.UTF-8
+fi
+
+typeset -U path
+for _d in "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin"; do
+  [[ -d "$_d" ]] && path=("$_d" $path)
+done
+unset _d
+
+if (( $+commands[nvim] )); then
+  export EDITOR=nvim
+  export VISUAL=nvim
+fi

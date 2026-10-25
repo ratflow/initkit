@@ -11,9 +11,11 @@
 
 set -euo pipefail
 
-# --- shell-inits preamble v1 (identical across core/ and sets/ scripts) -----
+# --- shell-inits preamble v2 (identical across core/ and sets/ scripts) -----
 DEFAULT_BASE_URL="https://raw.githubusercontent.com/ratflow/initkit/master"  # override with --base-url or SHELL_INITS_BASE_URL
-SI_BASE_URL=${SHELL_INITS_BASE_URL:-}
+# SI_BASE_URL precedence: --base-url arg > SHELL_INITS_BASE_URL env > value
+# inherited from a parent shell-inits process (sets -> core) > local checkout
+SI_BASE_URL=${SHELL_INITS_BASE_URL:-${SI_BASE_URL:-}}
 _si_self=${BASH_SOURCE[0]:-}
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -21,14 +23,15 @@ while [[ $# -gt 0 ]]; do
     *) shift ;;
   esac
 done
-if [[ -z $SI_BASE_URL && -n $_si_self && -f $_si_self ]]; then
+# local mode only when this script really lives inside a checkout (a copy
+# fetched to a temp file by run-set.sh must not be mistaken for a checkout)
+if [[ -z $SI_BASE_URL && -n $_si_self && -f $_si_self ]] \
+  && SI_ROOT=$(cd -- "$(dirname -- "$_si_self")/.." && pwd) \
+  && [[ -f $SI_ROOT/lib/common.sh ]]; then
   SI_MODE=local
-  SI_ROOT=$(cd -- "$(dirname -- "$_si_self")/.." && pwd)
-elif [[ -z $SI_BASE_URL && -n $DEFAULT_BASE_URL ]]; then
-  SI_MODE=remote
-  SI_BASE_URL=$DEFAULT_BASE_URL
 else
   SI_MODE=remote
+  [[ -n $SI_BASE_URL ]] || SI_BASE_URL=$DEFAULT_BASE_URL
 fi
 export SI_BASE_URL SI_MODE SI_ROOT
 if [[ -z $SI_BASE_URL && $SI_MODE != local ]]; then
@@ -36,7 +39,10 @@ if [[ -z $SI_BASE_URL && $SI_MODE != local ]]; then
   exit 1
 fi
 if [[ $SI_MODE == local ]]; then
-  source "$SI_ROOT/lib/common.sh"
+  for _si_lib in common distro fetch pkg state asset run-set; do
+    source "$SI_ROOT/lib/${_si_lib}.sh"
+  done
+  unset _si_lib
 else
   command -v curl >/dev/null 2>&1 || command -v wget >/dev/null 2>&1 \
     || { echo "shell-inits: curl or wget required" >&2; exit 1; }

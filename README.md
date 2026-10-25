@@ -1,7 +1,13 @@
 # initkit
 
-One-command bootstrap of a fully configured development environment: zsh +
-fzf + tmux + LazyVim + lazygit, optionally with a complete C++ toolchain.
+One-command bootstrap of a configured shell environment.
+
+Available sets:
+
+ - base: zsh + fzf + tmux
+ - neovim: base set + LazyVim + lazygit
+ - cpp: neovim + basic C++ toolchain.
+
 Works on fresh VMs and as pre-baked, offline-ready Docker images.
 
 ## Quick start
@@ -11,14 +17,19 @@ Works on fresh VMs and as pre-baked, offline-ready Docker images.
 As a regular user with sudo (or as root), one command sets everything up:
 
 ```sh
-# zsh + fzf + tmux + LazyVim + lazygit
-curl -fsSL https://raw.githubusercontent.com/ratflow/initkit/master/sets/zsh-tmux-neovim.sh | bash
+# zsh + fzf + tmux (shell only, no editors)
+curl -fsSL https://v.gd/initkit_zt | bash
+```
+
+```sh
+# the base set + LazyVim + lazygit
+curl -fsSL https://v.gd/initkit_ztn | bash
 ```
 
 ```sh
 # the same, plus the C++ stack: cmake, vcpkg, clangd, bear, lldb/codelldb,
 # LazyVim debugger (nvim-dap) and test runner (neotest + GoogleTest)
-curl -fsSL https://raw.githubusercontent.com/ratflow/initkit/master/sets/dev-cpp-neovim.sh | bash
+curl -fsSL https://v.gd/initkit_ztnc | bash
 ```
 
 When it finishes, open a new login shell (or `exec zsh`) and run:
@@ -61,7 +72,8 @@ docker load -i dist/dev-cpp-neovim_ubuntu-26.04.tar.gz
 
 | set               | contents                                                        |
 |-------------------|-----------------------------------------------------------------|
-| `zsh-tmux-neovim` | zsh + fzf, tmux, LazyVim, lazygit                               |
+| `zsh-tmux`        | zsh + fzf, tmux (no prebuilt docker image; the curl flow above installs it in seconds) |
+| `zsh-tmux-neovim` | the above + LazyVim, lazygit                                    |
 | `dev-cpp-neovim`  | the above + cmake/ninja/gcc/g++, vcpkg, clangd, bear, lldb + codelldb, nvim-dap, neotest/GoogleTest, `~/cpp-sample` demo project |
 
 Individual components can be installed the same way, one tool at a time:
@@ -109,6 +121,7 @@ can point the tools at any other checkout or HTTP server instead:
 
 ```sh
 # from a local checkout
+./sets/zsh-tmux.sh
 ./sets/dev-cpp-neovim.sh
 
 # from another branch/server

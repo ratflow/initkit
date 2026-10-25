@@ -1,8 +1,98 @@
-# shell-inits
+# initkit
 
-One-command bootstrap of a configured shell environment (tmux + zsh/fzf +
-LazyVim/lazygit) on fresh VMs and containers. See [PLAN.md](PLAN.md) for the
-full architecture.
+One-command bootstrap of a fully configured development environment: zsh +
+fzf + tmux + LazyVim + lazygit, optionally with a complete C++ toolchain.
+Works on fresh VMs and as pre-baked, offline-ready Docker images.
+
+## Quick start
+
+### On a fresh VM
+
+As a regular user with sudo (or as root), one command sets everything up:
+
+```sh
+# zsh + fzf + tmux + LazyVim + lazygit
+curl -fsSL https://raw.githubusercontent.com/ratflow/initkit/master/sets/zsh-tmux-neovim.sh | bash
+```
+
+```sh
+# the same, plus the C++ stack: cmake, vcpkg, clangd, bear, lldb/codelldb,
+# LazyVim debugger (nvim-dap) and test runner (neotest + GoogleTest)
+curl -fsSL https://raw.githubusercontent.com/ratflow/initkit/master/sets/dev-cpp-neovim.sh | bash
+```
+
+When it finishes, open a new login shell (or `exec zsh`) and run:
+
+```sh
+tmux new -As main
+```
+
+Everything is idempotent: re-running a set only fills the gaps. Use
+`SHELL_INITS_FORCE=1` to reinstall, `SHELL_INITS_SKIP=tmux,neovim` to exclude
+components (see [Environment variables](#environment-variables)).
+
+### With Docker
+
+Build a fully initialized image (configs, all nvim plugins, compiled
+treesitter parsers and - for C++ - the vcpkg cache are baked in at build time,
+so the image needs no network at runtime):
+
+```sh
+./dockerfiles/zsh-tmux-neovim.build.sh    # -> initkit/zsh-tmux-neovim:ubuntu-26.04
+./dockerfiles/dev-cpp-neovim.build.sh     # -> initkit/dev-cpp-neovim:ubuntu-26.04
+```
+
+Run it - you land in tmux session `main` as user `dev` (passwordless sudo,
+uid/gid matching your host if built with `--uid`/`--gid`):
+
+```sh
+docker run -it initkit/zsh-tmux-neovim:ubuntu-26.04
+docker run -it initkit/dev-cpp-neovim:ubuntu-26.04
+```
+
+For offline environments, export the image and load it on the target machine:
+
+```sh
+./dockerfiles/dev-cpp-neovim.build.sh --save
+docker load -i dist/dev-cpp-neovim_ubuntu-26.04.tar.gz
+```
+
+## Sets
+
+| set               | contents                                                        |
+|-------------------|-----------------------------------------------------------------|
+| `zsh-tmux-neovim` | zsh + fzf, tmux, LazyVim, lazygit                               |
+| `dev-cpp-neovim`  | the above + cmake/ninja/gcc/g++, vcpkg, clangd, bear, lldb + codelldb, nvim-dap, neotest/GoogleTest, `~/cpp-sample` demo project |
+
+Individual components can be installed the same way, one tool at a time:
+`core/tmux.sh`, `core/zsh.sh`, `core/fzf.sh`, `core/lazygit.sh`,
+`core/neovim.sh`, `core/cpp-dev.sh`.
+
+### What the C++ set gives you
+
+- **build**: cmake, ninja, gcc/g++ (GCC 15 on ubuntu-26.04), make, pkg-config
+- **dependencies**: [vcpkg](https://github.com/microsoft/vcpkg) at `/opt/vcpkg`
+  (pinned release tag, see `versions.env`), user-owned, `VCPKG_ROOT` set and
+  `vcpkg` on PATH in zsh
+- **code intelligence**: clangd, clang-format, clang-tidy
+- **compile_commands for non-cmake projects**: `bear -- make`
+- **debugging**: codelldb (nvim-dap adapter) with its bundled lldb (CLI +
+  liblldb), installed self-contained under `/usr/local/lib/codelldb`
+- **tests**: neotest with the GoogleTest adapter
+- **`~/cpp-sample`**: a minimal cmake + vcpkg + gtest project demonstrating
+  the whole loop - build it, run it, run its tests, set a breakpoint and debug
+  it (pre-built in the docker image, rebuildable offline):
+
+  ```sh
+  cd ~/cpp-sample
+  cmake --preset debug && cmake --build --preset debug
+  ./build/debug/cpp-sample
+  ctest --preset debug
+  ```
+
+  In nvim: `<leader>db` breakpoint, `<leader>dc` run/continue, `<leader>tr`
+  run nearest test, `<leader>td` debug nearest test, `gd`/`gr`/`K` code
+  navigation.
 
 ## Supported distros
 
@@ -12,25 +102,23 @@ full architecture.
 | ubuntu-24.04  | planned      |
 | alpine-3.21   | planned      |
 
-## Usage
+## Alternative ways to install
 
-On a fresh VM (as a regular user with sudo, or as root):
-
-```sh
-curl -fsSL <base-url>/sets/zsh-tmux-neovim.sh | bash -s -- --base-url <base-url>
-```
-
-`<base-url>` is the raw-files root of this repository (private git server,
-GitHub mirror or any HTTP server serving a checkout). Alternative forms:
+The quick start fetches scripts from this repository's `master` branch. You
+can point the tools at any other checkout or HTTP server instead:
 
 ```sh
-SHELL_INITS_BASE_URL=<base-url> curl -fsSL <base-url>/sets/zsh-tmux-neovim.sh | bash
-# or from a checkout:
-./sets/zsh-tmux-neovim.sh
+# from a local checkout
+./sets/dev-cpp-neovim.sh
+
+# from another branch/server
+curl -fsSL <base-url>/sets/dev-cpp-neovim.sh | bash -s -- --base-url <base-url>
+# or
+SHELL_INITS_BASE_URL=<base-url> curl -fsSL <base-url>/sets/dev-cpp-neovim.sh | bash
 ```
 
-Individual components can be installed the same way (`core/tmux.sh`,
-`core/zsh.sh`, `core/fzf.sh`, `core/lazygit.sh`, `core/neovim.sh`).
+`<base-url>` is the raw-files root of the scripts (e.g.
+`https://raw.githubusercontent.com/ratflow/initkit/master`).
 
 ### Environment variables
 
@@ -40,39 +128,24 @@ Individual components can be installed the same way (`core/tmux.sh`,
 | `SHELL_INITS_USER`           | configure this user when running as root (docker) |
 | `SHELL_INITS_SKIP`           | comma-separated components to skip (e.g. `tmux`)  |
 | `SHELL_INITS_FORCE`          | reinstall even if state markers say "done"        |
-| `SHELL_INITS_NVIM_BOOTSTRAP` | `1` = sync nvim plugins headlessly right away     |
+| `SHELL_INITS_NVIM_BOOTSTRAP` | `1` = sync/verify nvim plugins and build the sample project headlessly (used by image builds; failures become fatal) |
 
-## Docker images
+## Docker images in detail
 
-Build a fully initialized image (nvim plugins synced at build time, works
-offline at runtime) and drop straight into tmux session `main`:
-
-```sh
-./dockerfiles/zsh-tmux-neovim.build.sh               # -> shell-inits/zsh-tmux-neovim:ubuntu-26.04
-./dockerfiles/zsh-tmux-neovim.build.sh --uid 1001    # bake everything for uid 1001
-docker run -it shell-inits/zsh-tmux-neovim:ubuntu-26.04
-```
-
-The image is fully initialized at build time (all lazyvim plugins, the
-treesitter parser set compiled in, spell files and the tree-sitter CLI), so it
-needs no network at runtime. For offline distribution:
-
-```sh
-./dockerfiles/zsh-tmux-neovim.build.sh --save         # also writes dist/zsh-tmux-neovim_ubuntu-26.04.tar.gz
-docker load -i dist/zsh-tmux-neovim_ubuntu-26.04.tar.gz
-```
-
-The build script starts a temporary local HTTP server serving this repository
-and builds with `--network=host`, so the image is produced by the exact same
-`curl | bash` flow used on VMs. Useful options: `--distro <slug>` (repeatable),
-`--all`, `--gid`, `--tag`, `--no-cache`, and `--base-url <url>` for remote
-docker hosts or Docker Desktop (where `--network=host` does not work, serve the
-repo yourself and pass `http://host.docker.internal:<port>`).
-
-Inside the container: non-root user `dev` with passwordless sudo, entrypoint
-runs `tmux new -As main` (set `SHELL_INITS_NO_TMUX=1` for a plain zsh), and
-because the user and all files are created with the requested uid/gid, anything
-the container writes (mounted volumes included) matches your host user.
+- base image: plain distro (`ubuntu:26.04`), nothing preinstalled beyond a
+  downloader; everything above comes from the set scripts,
+- build process: the build script serves this repository over a temporary
+  local HTTP server and runs `docker build --network=host`, so images are
+  produced by the exact same `curl | bash` flow used on VMs,
+- useful options: `--distro <slug>` (repeatable), `--all`, `--uid`, `--gid`,
+  `--tag`, `--no-cache`, `--save`, and `--base-url <url>` for remote docker
+  hosts or Docker Desktop (where `--network=host` does not work, serve the
+  repo yourself and pass `http://host.docker.internal:<port>`),
+- inside the container: non-root user `dev` with passwordless sudo, the
+  entrypoint runs `tmux new -As main` (set `SHELL_INITS_NO_TMUX=1` for a plain
+  zsh), and because the user and all files are created with the requested
+  uid/gid, anything the container writes (mounted volumes included) matches
+  your host user.
 
 ### Clipboard sharing (no X11/Wayland needed)
 
@@ -106,5 +179,15 @@ How it works:
 - **LazyVim**: catppuccin theme, snacks explorer tweaks, OSC52 clipboard over
   ssh, 42 treesitter parsers + spell files precompiled during image builds
   (works fully offline). Language-specific plugins are intentionally out of
-  scope for now.
+  scope for the base set - see the `dev-cpp-neovim` set for the C++ layer.
 - **lazygit**: release binary with matching pastel theme.
+
+## How it works
+
+Three small layers keep the project easy to extend:
+
+- `core/*.sh` - one atomic, idempotent initializer per tool (distro
+  differences isolated in `lib/pkgmaps/`), runnable standalone,
+- `sets/*.sh` - curl-able compositions of core initializers (the "sets"),
+- `dockerfiles/*` - image targets that run a set inside `docker build` and
+  finish the offline provisioning (plugin sync, sample build).

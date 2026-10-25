@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # --- shell-inits preamble v1 (identical across core/ and sets/ scripts) -----
-DEFAULT_BASE_URL=""  # per-deployment fallback, e.g. https://git.example.com/shell-inits/raw/main
+DEFAULT_BASE_URL="https://raw.githubusercontent.com/ratflow/initkit/master"  # override with --base-url or SHELL_INITS_BASE_URL
 SI_BASE_URL=${SHELL_INITS_BASE_URL:-}
 _si_self=${BASH_SOURCE[0]:-}
 while [[ $# -gt 0 ]]; do
@@ -48,7 +48,7 @@ else
 fi
 # --- end preamble ------------------------------------------------------------
 
-ZSH_REV=2
+ZSH_REV=3
 ZSH_PLUGINS=(
   zsh-users/zsh-autosuggestions
   zsh-users/zsh-syntax-highlighting

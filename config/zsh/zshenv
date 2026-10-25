@@ -13,6 +13,13 @@ for _d in "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin"; do
 done
 unset _d
 
+# vcpkg toolchain when installed system-wide (core/cpp-dev.sh, sets/dev-cpp-neovim);
+# inert in environments without it
+if [[ -z ${VCPKG_ROOT:-} && -d /opt/vcpkg ]]; then
+  export VCPKG_ROOT=/opt/vcpkg
+  path=("/opt/vcpkg" $path)
+fi
+
 if (( $+commands[nvim] )); then
   export EDITOR=nvim
   export VISUAL=nvim

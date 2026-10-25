@@ -16,5 +16,17 @@ declare -gA PKG=(
   [ripgrep]=ripgrep
   [fd-find]=fd-find
   [gcc]=gcc
+  [g++]=g++
   [libc6-dev]=libc6-dev
+  [make]=make
+  [cmake]=cmake
+  [ninja]=ninja-build
+  [clangd]=clangd
+  [clang-format]=clang-format
+  [clang-tidy]=clang-tidy
+  [lldb]=lldb
+  [bear]=bear
+  [pkg-config]=pkg-config
+  [zip]=zip
+  [unzip]=unzip
 )

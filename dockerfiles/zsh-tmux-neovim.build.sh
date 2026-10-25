@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # dockerfiles/zsh-tmux-neovim.build.sh
-# Build fully-initialized shell-inits/zsh-tmux-neovim:<distro> images.
+# Build fully-initialized initkit/zsh-tmux-neovim:<distro> images.
 #
 # Serves this repository over a temporary local HTTP server (so the image build
 # uses the exact same curl | bash flow as a VM) and then runs docker build with
@@ -93,7 +93,7 @@ echo "==> building set '${SET}' (scripts served from: ${BASE_URL})"
 for DISTRO in "${DISTROS[@]}"; do
   # distro slug (ubuntu-26.04) -> image reference (ubuntu:26.04)
   DISTRO_REF="${DISTRO/-/:}"
-  IMAGE="shell-inits/${SET}:${TAG:-${DISTRO}}"
+  IMAGE="initkit/${SET}:${TAG:-${DISTRO}}"
   echo "==> image: ${IMAGE} (distro: ${DISTRO_REF}, uid/gid: ${USER_UID}:${USER_GID})"
   # shellcheck disable=SC2086
   docker build \

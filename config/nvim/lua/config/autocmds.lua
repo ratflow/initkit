@@ -1,1 +1,1 @@
--- shell-inits: autocmds on top of LazyVim defaults
+-- initkit: autocmds on top of LazyVim defaults

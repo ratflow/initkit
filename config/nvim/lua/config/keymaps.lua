@@ -1,2 +1,2 @@
--- shell-inits: keymaps on top of LazyVim defaults
+-- initkit: keymaps on top of LazyVim defaults
 -- (terminal keymaps are registered by lua/plugins/terminal.lua)

@@ -43,12 +43,12 @@ RUN curl -fsSL "${SHELL_INITS_BASE_URL}/sets/{{SET}}.sh" \
 # slim down
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY dockerfiles/entrypoint.sh /usr/local/bin/shell-inits-entrypoint
-RUN chmod 0755 /usr/local/bin/shell-inits-entrypoint
+COPY dockerfiles/entrypoint.sh /usr/local/bin/initkit-entrypoint
+RUN chmod 0755 /usr/local/bin/initkit-entrypoint
 
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 ENV SHELL=/usr/bin/zsh
 # UTF-8 locale for the tmux server and everything else in the container
 ENV LANG=C.UTF-8
-ENTRYPOINT ["/usr/local/bin/shell-inits-entrypoint"]
+ENTRYPOINT ["/usr/local/bin/initkit-entrypoint"]

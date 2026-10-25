@@ -1,4 +1,4 @@
-# shell-inits prompt.zsh - two-line pastel prompt with cached git info.
+# initkit prompt.zsh - two-line pastel prompt with cached git info.
 #
 # Big-repo safety strategy (synchronous by design, async planned for later):
 #  - git info is computed only when the directory changed or a command ran

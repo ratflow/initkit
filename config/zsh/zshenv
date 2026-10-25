@@ -1,4 +1,4 @@
-# shell-inits zshenv - minimal, sourced by every zsh instance (keep it fast)
+# initkit zshenv - minimal, sourced by every zsh instance (keep it fast)
 
 # UTF-8 fallback: fresh VMs/containers have no locale set, and a non-UTF-8
 # locale makes tmux render box-drawing/unicode prompts as underscores.

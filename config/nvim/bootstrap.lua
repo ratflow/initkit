@@ -1,4 +1,4 @@
--- shell-inits bootstrap.lua - headless initialization used by image builds
+-- initkit bootstrap.lua - headless initialization used by image builds
 -- and SHELL_INITS_NVIM_BOOTSTRAP=1 (see core/neovim.sh). Lives outside lua/
 -- so it never loads during normal startup. Run AFTER "+Lazy! sync".
 local parsers = require("config.treesitter_parsers")
@@ -22,5 +22,5 @@ local timed_out = not vim.wait(480000, function()
 end, 3000)
 
 local found = #vim.api.nvim_get_runtime_file("parser/*.so", true)
-print(("shell-inits bootstrap: %d/%d parsers ready, %d parser files in runtime, timed out: %s")
+print(("initkit bootstrap: %d/%d parsers ready, %d parser files in runtime, timed out: %s")
   :format(#parsers - missing, #parsers, found, tostring(timed_out)))

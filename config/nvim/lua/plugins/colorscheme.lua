@@ -1,4 +1,4 @@
--- shell-inits: catppuccin (macchiato) as the default colorscheme
+-- initkit: catppuccin (macchiato) as the default colorscheme
 return {
   {
     "catppuccin/nvim",

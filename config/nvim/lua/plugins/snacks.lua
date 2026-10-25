@@ -1,4 +1,4 @@
--- shell-inits: snacks.nvim tweaks - explorer/picker visibility, notifications
+-- initkit: snacks.nvim tweaks - explorer/picker visibility, notifications
 return {
   "folke/snacks.nvim",
   opts = {

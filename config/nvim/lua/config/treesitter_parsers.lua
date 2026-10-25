@@ -1,4 +1,4 @@
--- shell-inits: single source of truth for treesitter parsers to install.
+-- initkit: single source of truth for treesitter parsers to install.
 -- LazyVim's default set; kept explicit so image builds can pre-install
 -- exactly this list and nvim works fully offline.
 return {

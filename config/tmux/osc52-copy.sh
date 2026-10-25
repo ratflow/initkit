@@ -1,5 +1,5 @@
 #!/bin/sh
-# shell-inits osc52-copy.sh - copy stdin to the workstation clipboard via OSC 52.
+# initkit osc52-copy.sh - copy stdin to the workstation clipboard via OSC 52.
 # Works over ssh, docker run -it and nested sessions: the escape sequence is
 # plain terminal output, no X11/Wayland sockets required (the terminal itself
 # must support OSC 52 - kitty, wezterm, iterm2, alacritty, windows terminal).

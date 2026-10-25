@@ -55,7 +55,7 @@ si_set_default_shell_zsh() {
 
 si_print_summary() {
   local tool
-  printf '\n==> %s complete\n' "${SET_NAME:-shell-inits}"
+  printf '\n==> %s complete\n' "${SET_NAME:-initkit}"
   for tool in zsh tmux fzf nvim lazygit cmake clangd bear lldb codelldb vcpkg; do
     if si_have_cmd "$tool"; then
       printf '    %-8s %s\n' "$tool" "$(command -v "$tool")"

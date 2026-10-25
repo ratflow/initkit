@@ -1,4 +1,4 @@
--- shell-inits: test layer (deployed by core/cpp-dev.sh, set: dev-cpp-neovim;
+-- initkit: test layer (deployed by core/cpp-dev.sh, set: dev-cpp-neovim;
 -- the neotest core extra itself is imported by config/lazy.lua).
 -- neotest + the GoogleTest adapter, matching the vcpkg/gtest sample project.
 --

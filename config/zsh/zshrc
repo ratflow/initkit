@@ -1,4 +1,4 @@
-# shell-inits zshrc - interactive configuration (no plugin manager)
+# initkit zshrc - interactive configuration (no plugin manager)
 
 # --- input --------------------------------------------------------------------
 bindkey -e

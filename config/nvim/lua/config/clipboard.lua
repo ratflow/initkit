@@ -1,4 +1,4 @@
--- shell-inits: OSC 52 clipboard whenever there is no local clipboard tool -
+-- initkit: OSC 52 clipboard whenever there is no local clipboard tool -
 -- that covers ssh sessions (SSH_TTY) and containers/VMs without xclip/wl-copy.
 --
 -- Inside tmux, copies are routed through ~/.config/tmux/osc52-copy.sh, which

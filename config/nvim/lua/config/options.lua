@@ -1,4 +1,4 @@
--- shell-inits: options on top of LazyVim defaults
+-- initkit: options on top of LazyVim defaults
 
 -- sync clipboard with the + register by default (OSC52 over ssh, see clipboard.lua)
 vim.opt.clipboard = "unnamedplus"

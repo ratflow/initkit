@@ -47,7 +47,7 @@ usage() {
   exit 0
 }
 
-die() { echo "[shell-inits][error] $*" >&2; exit 1; }
+die() { echo "[initkit][error] $*" >&2; exit 1; }
 
 while [[ $# -gt 0 ]]; do
   case $1 in

@@ -1,4 +1,4 @@
-# shell-inits lazygit config - catppuccin macchiato pastel theme, no icons
+# initkit lazygit config - catppuccin macchiato pastel theme, no icons
 gui:
   showRandomTip: false
   border: rounded

@@ -1,12 +1,12 @@
-# lib/common.sh - shared helpers for all shell-inits scripts
+# lib/common.sh - shared helpers for all initkit scripts
 # Sourced after the standard entry preamble (which exports SI_BASE_URL/SI_MODE/SI_ROOT).
 set -euo pipefail
 
 # --- logging (logs go to stderr; stdout is reserved for return values) -------
 
-si_log()  { printf '[shell-inits] %s\n' "$*" >&2; }
-si_warn() { printf '[shell-inits][warn] %s\n' "$*" >&2; }
-si_die()  { printf '[shell-inits][error] %s\n' "$*" >&2; exit 1; }
+si_log()  { printf '[initkit] %s\n' "$*" >&2; }
+si_warn() { printf '[initkit][warn] %s\n' "$*" >&2; }
+si_die()  { printf '[initkit][error] %s\n' "$*" >&2; exit 1; }
 si_banner() { printf '\n==> %s\n' "$*" >&2; }
 
 # --- small predicates ------------------------------------------------------
@@ -92,8 +92,8 @@ si_user_mkdir() {
 si_backup_existing() {
   local path=$1 bak
   [[ -e $path ]] || return 0
-  bak="${path}.pre-shell-inits"
-  [[ -e $bak ]] && bak="${path}.pre-shell-inits.$(date +%s)"
+  bak="${path}.pre-initkit"
+  [[ -e $bak ]] && bak="${path}.pre-initkit.$(date +%s)"
   cp -a "$path" "$bak"
   si_warn "backed up existing $path -> $bak"
 }

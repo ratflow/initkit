@@ -2,7 +2,7 @@
 # State lives in the target user's state dir; first line = version/rev marker.
 
 si_state_root() {
-  printf '%s/shell-inits' "${XDG_STATE_HOME:-$(si_target_home)/.local/state}"
+  printf '%s/initkit' "${XDG_STATE_HOME:-$(si_target_home)/.local/state}"
 }
 
 si_state_file() {

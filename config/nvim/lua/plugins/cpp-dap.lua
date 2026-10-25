@@ -1,4 +1,4 @@
--- shell-inits: debugger layer (deployed by core/cpp-dev.sh, set: dev-cpp-neovim;
+-- initkit: debugger layer (deployed by core/cpp-dev.sh, set: dev-cpp-neovim;
 -- the dap core extra itself is imported by config/lazy.lua). codelldb is
 -- installed system-wide by core/cpp-dev.sh (/usr/local/bin), so the default
 -- adapter ("codelldb" resolved from PATH) needs no mason download and

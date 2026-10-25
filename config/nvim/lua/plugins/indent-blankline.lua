@@ -1,4 +1,4 @@
--- shell-inits: subtle pastel rainbow indent guides, no scope line.
+-- initkit: subtle pastel rainbow indent guides, no scope line.
 -- The IblIndentN groups are defined here (catppuccin does not ship them and
 -- ibl refuses to start when they are missing). Static catppuccin macchiato
 -- colors, re-applied on every colorscheme switch.

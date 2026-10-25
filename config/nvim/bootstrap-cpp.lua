@@ -1,4 +1,4 @@
--- shell-inits bootstrap-cpp.lua - headless verification of the C++ layer,
+-- initkit bootstrap-cpp.lua - headless verification of the C++ layer,
 -- used by image builds (see core/cpp-dev.sh). Lives outside lua/ so it never
 -- loads during normal startup. Run AFTER "+Lazy! sync"; exits with :cquit when
 -- anything is missing so docker builds fail loudly instead of shipping broken
@@ -29,9 +29,9 @@ for _, exe in ipairs({ "clangd", "clang-format", "codelldb", "cmake", "bear", "n
 end
 
 if #problems > 0 then
-  print("shell-inits cpp bootstrap FAILED:\n  " .. table.concat(problems, "\n  "))
+  print("initkit cpp bootstrap FAILED:\n  " .. table.concat(problems, "\n  "))
   vim.cmd("cquit 1")
 end
 
-print(("shell-inits cpp bootstrap: %d plugins + 6 toolchain binaries verified")
+print(("initkit cpp bootstrap: %d plugins + 6 toolchain binaries verified")
   :format(vim.tbl_count(expected_plugins)))

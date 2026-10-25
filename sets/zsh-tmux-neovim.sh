@@ -8,10 +8,10 @@
 
 set -euo pipefail
 
-# --- shell-inits preamble v2 (identical across core/ and sets/ scripts) -----
+# --- initkit preamble v2 (identical across core/ and sets/ scripts) -----
 DEFAULT_BASE_URL="https://raw.githubusercontent.com/ratflow/initkit/master"  # override with --base-url or SHELL_INITS_BASE_URL
 # SI_BASE_URL precedence: --base-url arg > SHELL_INITS_BASE_URL env > value
-# inherited from a parent shell-inits process (sets -> core) > local checkout
+# inherited from a parent initkit process (sets -> core) > local checkout
 SI_BASE_URL=${SHELL_INITS_BASE_URL:-${SI_BASE_URL:-}}
 _si_self=${BASH_SOURCE[0]:-}
 while [[ $# -gt 0 ]]; do
@@ -32,7 +32,7 @@ else
 fi
 export SI_BASE_URL SI_MODE SI_ROOT
 if [[ -z $SI_BASE_URL && $SI_MODE != local ]]; then
-  echo "shell-inits: base URL required (--base-url URL, SHELL_INITS_BASE_URL env, or run from a checkout)" >&2
+  echo "initkit: base URL required (--base-url URL, SHELL_INITS_BASE_URL env, or run from a checkout)" >&2
   exit 1
 fi
 if [[ $SI_MODE == local ]]; then
@@ -42,7 +42,7 @@ if [[ $SI_MODE == local ]]; then
   unset _si_lib
 else
   command -v curl >/dev/null 2>&1 || command -v wget >/dev/null 2>&1 \
-    || { echo "shell-inits: curl or wget required" >&2; exit 1; }
+    || { echo "initkit: curl or wget required" >&2; exit 1; }
   _si_tmp=$(mktemp -d)
   for _si_lib in common distro fetch pkg state asset run-set; do
     if command -v curl >/dev/null 2>&1; then

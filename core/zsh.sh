@@ -54,7 +54,7 @@ else
 fi
 # --- end preamble ------------------------------------------------------------
 
-ZSH_REV=3
+ZSH_REV=4
 ZSH_PLUGINS=(
   zsh-users/zsh-autosuggestions
   zsh-users/zsh-syntax-highlighting

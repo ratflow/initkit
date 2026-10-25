@@ -55,7 +55,7 @@ else
 fi
 # --- end preamble ------------------------------------------------------------
 
-NEOVIM_REV=5
+NEOVIM_REV=6
 NVIM_MIN_MAJOR=0
 NVIM_MIN_MINOR=10
 

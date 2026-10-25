@@ -22,19 +22,30 @@ compinit
 
 # --- fzf (key bindings + completion + pastel look) ---------------------------------
 if (( $+commands[fzf] )); then
-  # fzf >= 0.48 ships its own integration
-  if ! source <(fzf --zsh 2>/dev/null); then
+  # fzf >= 0.48 ships its own integration; probe it explicitly because sourcing
+  # the (empty) error output of an older fzf would silently succeed and leave
+  # ctrl-r without any widget at all
+  if fzf --zsh >/dev/null 2>&1; then
+    source <(fzf --zsh)
+  else
     [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]] && \
       source /usr/share/doc/fzf/examples/key-bindings.zsh
     [[ -r /usr/share/doc/fzf/examples/completion.zsh ]] && \
       source /usr/share/doc/fzf/examples/completion.zsh
+  fi
+  # when no fzf widget was loaded, ctrl-r falls back to zsh incremental search:
+  # give ctrl-n/ctrl-p their usual next/prev-match roles in that mode too
+  if [[ -z ${widgets[fzf-history-widget]:-} ]]; then
+    bindkey -M isearch '^P' history-incremental-search-backward
+    bindkey -M isearch '^N' history-incremental-search-forward
   fi
   export FZF_DEFAULT_OPTS="\
 --height=40% --layout=reverse --border=rounded --info=inline \
 --color=fg:#cad3f5,bg:#24273a,hl:#c6a0f6 \
 --color=fg+:#cad3f5,bg+:#363a4f,hl+:#c6a0f6 \
 --color=info:#91d7e3,prompt:#8aadf4,pointer:#f5bde6 \
---color=marker:#a6da95,spinner:#f5a97f,header:#8bd5ca"
+--color=marker:#a6da95,spinner:#f5a97f,header:#8bd5ca \
+--bind=ctrl-n:down,ctrl-p:up"
 fi
 
 # --- vendored plugins (plain git clones, see core/zsh.sh) ---------------------------
@@ -57,6 +68,7 @@ fi
 # --- aliases ----------------------------------------------------------------------------
 alias ..='cd ..'
 alias ...='cd ../..'
+alias v='nvim'
 if (( $+commands[eza] )); then
   alias ll='eza -lah --group-directories-first --color=always | less'
   alias l='eza -lah --group-directories-first --color=always | less'
